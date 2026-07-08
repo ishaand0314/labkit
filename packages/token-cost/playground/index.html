@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>labkit / token-cost — playground</title>
+  <style>
+    :root {
+      --bg: #0b0e14;
+      --panel: #11151f;
+      --panel-2: #161b28;
+      --border: #232a3a;
+      --text: #e6e9f0;
+      --muted: #8b93a7;
+      --faint: #5b6377;
+      --accent: #4cc38a;
+      --accent-dim: rgba(76, 195, 138, 0.12);
+      --openai: #7cb8ff;
+      --anthropic: #f0a56c;
+      --google: #b39ddb;
+      --mono: "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+      --sans: -apple-system, "Segoe UI", Inter, Roboto, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 48px 24px 64px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; }
+    header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    header .logo {
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    header .logo .dim { color: var(--faint); font-weight: 400; }
+    header .badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 1px 10px;
+    }
+    .tagline { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 640px) { .inputs { grid-template-columns: 1fr; } }
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    textarea, input[type="number"] {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    textarea:focus, input[type="number"]:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 128px; }
+    .meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--faint);
+      margin-top: 8px;
+    }
+
+    .summary {
+      background: var(--accent-dim);
+      border: 1px solid rgba(76, 195, 138, 0.3);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .summary strong { color: var(--accent); }
+    .summary .x { font-family: var(--mono); font-weight: 700; color: var(--accent); }
+
+    .table-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    th, td { padding: 10px 16px; white-space: nowrap; }
+    th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    td.num { font-family: var(--mono); font-size: 13px; }
+    tbody tr { border-bottom: 1px solid rgba(35, 42, 58, 0.5); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr.cheapest { background: var(--accent-dim); }
+    tbody tr.cheapest td.model .name { color: var(--accent); font-weight: 600; }
+    td.model .name { font-weight: 500; }
+    .lab {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-radius: 4px;
+      padding: 1px 7px;
+      margin-right: 10px;
+      min-width: 72px;
+      text-align: center;
+    }
+    .lab.openai    { color: var(--openai);    background: rgba(124, 184, 255, 0.1); }
+    .lab.anthropic { color: var(--anthropic); background: rgba(240, 165, 108, 0.1); }
+    .lab.google    { color: var(--google);    background: rgba(179, 157, 219, 0.1); }
+    .tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      margin-left: 8px;
+    }
+    .total { font-weight: 600; }
+
+    footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: var(--faint);
+    }
+    footer code {
+      font-family: var(--mono);
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 1px 6px;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <span class="logo"><span class="dim">labkit /</span> token-cost</span>
+      <span class="badge">playground</span>
+    </header>
+    <p class="tagline">Same prompt, nine models, three labs — what does it actually cost?</p>
+
+    <div class="inputs">
+      <div>
+        <label for="prompt">Prompt</label>
+        <textarea id="prompt" spellcheck="false" placeholder="Paste a prompt to price it across labs…">You are a senior support engineer. Summarize the following customer ticket thread, extract the root cause, and draft a friendly reply that offers two concrete next steps.</textarea>
+        <div class="meta" id="charMeta"></div>
+      </div>
+      <div>
+        <label for="outTokens">Assumed output tokens</label>
+        <input type="number" id="outTokens" value="500" min="0" step="50" />
+        <div class="meta">what you expect the model to write back</div>
+      </div>
+    </div>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th class="num">In tokens</th>
+            <th class="num">Out tokens</th>
+            <th class="num">$ / 1M in</th>
+            <th class="num">$ / 1M out</th>
+            <th class="num">Total</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <footer>
+      ~ token counts are chars÷4 estimates for every lab — the
+      <code>token-cost</code> CLI gives exact tokenizer counts. Pricing is USD
+      per 1M tokens, standard tier, snapshot verified 2026-07-09.
+    </footer>
+  </div>
+
+  <script>
+    // Snapshot of packages/core/src/registry.ts MODELS — pricing verified 2026-07-09.
+    // USD per 1M tokens, standard tier (no batch/cache discounts).
+    const MODELS = [
+      { id: "gpt-5.5", lab: "openai", label: "GPT-5.5", inputPerMTok: 5, outputPerMTok: 30 },
+      { id: "gpt-5.4", lab: "openai", label: "GPT-5.4", inputPerMTok: 2.5, outputPerMTok: 15 },
+      { id: "gpt-5.4-mini", lab: "openai", label: "GPT-5.4 mini", inputPerMTok: 0.75, outputPerMTok: 4.5 },
+      { id: "claude-opus-4-8", lab: "anthropic", label: "Claude Opus 4.8", inputPerMTok: 5, outputPerMTok: 25 },
+      { id: "claude-sonnet-5", lab: "anthropic", label: "Claude Sonnet 5", inputPerMTok: 3, outputPerMTok: 15 },
+      { id: "claude-haiku-4-5", lab: "anthropic", label: "Claude Haiku 4.5", inputPerMTok: 1, outputPerMTok: 5 },
+      { id: "gemini-3.1-pro-preview", lab: "google", label: "Gemini 3.1 Pro", inputPerMTok: 2, outputPerMTok: 12 },
+      { id: "gemini-3.5-flash", lab: "google", label: "Gemini 3.5 Flash", inputPerMTok: 1.5, outputPerMTok: 9 },
+      { id: "gemini-3.1-flash-lite", lab: "google", label: "Gemini 3.1 Flash-Lite", inputPerMTok: 0.25, outputPerMTok: 1.5 },
+    ];
+
+    const promptEl = document.getElementById("prompt");
+    const outEl = document.getElementById("outTokens");
+    const rowsEl = document.getElementById("rows");
+    const summaryEl = document.getElementById("summary");
+    const charMetaEl = document.getElementById("charMeta");
+
+    const fmtInt = (n) => n.toLocaleString("en-US");
+    const fmtUsd = (n) =>
+      n >= 0.01 ? "$" + n.toFixed(4) : "$" + n.toFixed(6);
+    const fmtRate = (n) => "$" + (Number.isInteger(n) ? n.toFixed(0) : String(n));
+
+    function render() {
+      const text = promptEl.value;
+      // chars/4 heuristic — same rough estimate for every lab.
+      const inputTokens = Math.ceil(text.length / 4);
+      const outputTokens = Math.max(0, Math.floor(Number(outEl.value) || 0));
+
+      charMetaEl.textContent =
+        fmtInt(text.length) + " chars → ~" + fmtInt(inputTokens) + " tokens (chars÷4)";
+
+      const rows = MODELS.map((m) => ({
+        ...m,
+        total:
+          (inputTokens / 1e6) * m.inputPerMTok +
+          (outputTokens / 1e6) * m.outputPerMTok,
+      })).sort((a, b) => a.total - b.total);
+
+      const cheapest = rows[0];
+      const priciest = rows[rows.length - 1];
+
+      rowsEl.innerHTML = rows
+        .map(
+          (m, i) =>
+            '<tr class="' + (i === 0 ? "cheapest" : "") + '">' +
+            '<td class="model"><span class="lab ' + m.lab + '">' + m.lab + "</span>" +
+            '<span class="name">' + m.label + "</span>" +
+            (i === 0 ? '<span class="tag">← cheapest</span>' : "") +
+            "</td>" +
+            '<td class="num">~' + fmtInt(inputTokens) + "</td>" +
+            '<td class="num">~' + fmtInt(outputTokens) + "</td>" +
+            '<td class="num">' + fmtRate(m.inputPerMTok) + "</td>" +
+            '<td class="num">' + fmtRate(m.outputPerMTok) + "</td>" +
+            '<td class="num total">' + fmtUsd(m.total) + "</td>" +
+            "</tr>"
+        )
+        .join("");
+
+      if (cheapest.total > 0) {
+        const ratio = priciest.total / cheapest.total;
+        summaryEl.innerHTML =
+          "<strong>" + cheapest.label + "</strong> is " +
+          '<span class="x">' + ratio.toFixed(1) + "×</span> cheaper than " +
+          priciest.label + " for this call.";
+      } else {
+        summaryEl.textContent = "Type a prompt to compare costs across labs.";
+      }
+    }
+
+    promptEl.addEventListener("input", render);
+    outEl.addEventListener("input", render);
+    render();
+  </script>
+</body>
+</html>
