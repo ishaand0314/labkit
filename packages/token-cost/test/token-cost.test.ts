@@ -1,4 +1,4 @@
-import { MODELS } from "@crosslab/core";
+import { MODELS } from "@labkit/core";
 import { describe, expect, it } from "vitest";
 import { compare, estimateForModel, heuristicTokenizer } from "../src/index.js";
 

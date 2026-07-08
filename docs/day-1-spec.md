@@ -1,4 +1,4 @@
-# Day 1 Spec — `@crosslab/token-cost`
+# Day 1 Spec — `@labkit/token-cost`
 
 **Goal:** ship a cross-lab token + cost comparator. The template already contains
 a working skeleton; today is about making the counts *real* and the output

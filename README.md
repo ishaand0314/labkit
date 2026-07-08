@@ -1,8 +1,6 @@
-# crosslab
+# labkit
 
 **AI-adjacent tooling, made simple.** Small, single-purpose utilities that work across models from different labs (OpenAI, Anthropic, Google) — the boring seams the big gateways bundle and lock behind their client, shipped as standalone tools you can drop into any stack in five minutes.
-
-> Rename `crosslab` to your own brand before you publish — it's the scope on every package (`@crosslab/*`) and the repo name.
 
 ## Why this exists
 
@@ -12,13 +10,13 @@ The unified-API / gateway space (LiteLLM, OpenRouter, Portkey…) is saturated a
 
 | Day | Package | What it does |
 | --- | --- | --- |
-| 1 | `@crosslab/token-cost` | Token count + USD cost for the same text across every lab |
-| 2 | `@crosslab/format` | Convert between OpenAI / Anthropic / Gemini message formats |
-| 3 | `@crosslab/tool-schema` | Write one tool definition, emit every lab's schema |
-| 4 | `@crosslab/model-ref` | Always-current context windows, pricing, limits per lab |
-| 5 | `@crosslab/structured` | Reliable JSON-to-schema across labs |
-| 6 | `@crosslab/portable` | Move a live conversation losslessly between labs |
-| 7 | `@crosslab/guardrail` | Catch mid-task goal drift and re-ground the agent |
+| 1 | `@labkit/token-cost` | Token count + USD cost for the same text across every lab |
+| 2 | `@labkit/format` | Convert between OpenAI / Anthropic / Gemini message formats |
+| 3 | `@labkit/tool-schema` | Write one tool definition, emit every lab's schema |
+| 4 | `@labkit/model-ref` | Always-current context windows, pricing, limits per lab |
+| 5 | `@labkit/structured` | Reliable JSON-to-schema across labs |
+| 6 | `@labkit/portable` | Move a live conversation losslessly between labs |
+| 7 | `@labkit/guardrail` | Catch mid-task goal drift and re-ground the agent |
 
 Only Day 1 ships in this template. Each following day adds one package — see [`docs/adding-a-tool.md`](docs/adding-a-tool.md).
 
@@ -39,7 +37,7 @@ node packages/token-cost/dist/cli.js estimate "your prompt" --json
 ## Structure
 
 ```
-crosslab/
+labkit/
 ├── packages/
 │   ├── core/          # shared: provider registry, types, CLI router
 │   └── token-cost/    # Day 1 tool (imports core)
@@ -51,4 +49,4 @@ crosslab/
 
 ## The one rule that keeps this fast
 
-**Shared knowledge lives in `@crosslab/core`.** When Day 2 needs each lab's message shape, it goes in `core` so Day 3's tool-schema converter can reuse it. By Day 5 you're assembling from parts you already built, not starting over. See [`docs/architecture.md`](docs/architecture.md).
+**Shared knowledge lives in `@labkit/core`.** When Day 2 needs each lab's message shape, it goes in `core` so Day 3's tool-schema converter can reuse it. By Day 5 you're assembling from parts you already built, not starting over. See [`docs/architecture.md`](docs/architecture.md).

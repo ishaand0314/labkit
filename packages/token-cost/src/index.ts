@@ -5,7 +5,7 @@ import {
   type ModelInfo,
   type Tokenizer,
   isStale,
-} from "@crosslab/core";
+} from "@labkit/core";
 
 /**
  * Day 1: token + cost comparator across labs.

@@ -1,5 +1,5 @@
 /**
- * Shared vocabulary for every crosslab tool.
+ * Shared vocabulary for every labkit tool.
  * Keeping these types in one place is what lets tools interoperate:
  * the token-cost comparator, the format translator, and the model
  * reference all speak the same `Lab` and `ModelId`.

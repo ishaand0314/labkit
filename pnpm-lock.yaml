@@ -25,7 +25,7 @@ importers:
 
   packages/token-cost:
     dependencies:
-      '@crosslab/core':
+      '@labkit/core':
         specifier: workspace:*
         version: link:../core
 

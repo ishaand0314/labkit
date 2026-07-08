@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import { cli } from "@crosslab/core";
+import { cli } from "@labkit/core";
 import { compare, hasStalePricing } from "./index.js";
 
 /**
- * CLI entry. Uses the shared router from @crosslab/core so this tool has the
+ * CLI entry. Uses the shared router from @labkit/core so this tool has the
  * same UX (--json, --help) as every other tool in the series.
  *
  * Usage:

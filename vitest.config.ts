@@ -9,7 +9,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: {
     alias: {
-      "@crosslab/core": fileURLToPath(new URL("./packages/core/src/index.ts", import.meta.url)),
+      "@labkit/core": fileURLToPath(new URL("./packages/core/src/index.ts", import.meta.url)),
     },
   },
   test: {

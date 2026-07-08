@@ -20,7 +20,7 @@ point; change `name`, `description`, and the `bin` key.
 ## 3. Build the library first, CLI second
 
 Put the real logic in `src/index.ts` as pure, typed functions. Keep `src/cli.ts`
-a thin wrapper that calls `cli.run(...)` from `@crosslab/core`.
+a thin wrapper that calls `cli.run(...)` from `@labkit/core`.
 
 ## 4. Write tests as the spec
 
@@ -30,7 +30,7 @@ the implementation until `pnpm test` is green.
 ## 5. Promote shared knowledge to core
 
 If you wrote anything another tool will need (a lab's message shape, a schema
-map), move it into `@crosslab/core`. That's what makes tomorrow faster.
+map), move it into `@labkit/core`. That's what makes tomorrow faster.
 
 ## Ship checklist
 

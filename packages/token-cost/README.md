@@ -1,4 +1,4 @@
-# @crosslab/token-cost
+# @labkit/token-cost
 
 **Compare token counts and USD cost for the same text across models from every lab — one view, zero setup.**
 
@@ -16,7 +16,7 @@ token-cost estimate "your prompt" --json
 
 ```ts
 // Library
-import { compare } from "@crosslab/token-cost";
+import { compare } from "@labkit/token-cost";
 
 const results = compare("summarize this document", { outputTokens: 500 });
 // -> CostEstimate[], cheapest first

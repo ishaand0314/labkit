@@ -2,7 +2,7 @@
 
 ## The compounding-core principle
 
-Every tool is a thin package that imports `@crosslab/core`. `core` holds the
+Every tool is a thin package that imports `@labkit/core`. `core` holds the
 knowledge that's shared across labs:
 
 - **`types.ts`** — the shared vocabulary (`Lab`, `ModelInfo`, `CostEstimate`…).
