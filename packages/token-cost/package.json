@@ -2,6 +2,7 @@
   "name": "@labkit/token-cost",
   "version": "0.1.0",
   "description": "Compare token counts and USD cost for the same text across models from every lab. One view, zero setup.",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,6 +16,27 @@
     }
   },
   "files": ["dist"],
+  "keywords": [
+    "llm",
+    "tokens",
+    "tokenizer",
+    "pricing",
+    "cost",
+    "openai",
+    "anthropic",
+    "gemini",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/siddhantdas/labkit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc --build"
   },

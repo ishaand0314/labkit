@@ -2,6 +2,7 @@
   "name": "@labkit/core",
   "version": "0.1.0",
   "description": "Shared cross-lab primitives: provider registry, types, and CLI routing.",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -12,6 +13,17 @@
     }
   },
   "files": ["dist"],
+  "keywords": ["llm", "tokens", "pricing", "openai", "anthropic", "gemini", "models", "registry"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/siddhantdas/labkit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc --build"
   }
