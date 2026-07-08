@@ -10,7 +10,7 @@ The unified-API / gateway space (LiteLLM, OpenRouter, Portkey…) is saturated a
 
 | Day | Package | What it does |
 | --- | --- | --- |
-| 1 | `@labkit/token-cost` | Token count + USD cost for the same text across every lab |
+| 1 | `@labkit/token-cost` | Token count + USD cost for the same text across every lab — exact OpenAI counts, honest estimates elsewhere (exact with free API keys) |
 | 2 | `@labkit/format` | Convert between OpenAI / Anthropic / Gemini message formats |
 | 3 | `@labkit/tool-schema` | Write one tool definition, emit every lab's schema |
 | 4 | `@labkit/model-ref` | Always-current context windows, pricing, limits per lab |
@@ -31,8 +31,12 @@ pnpm typecheck    # tsc --build
 
 # try Day 1:
 node packages/token-cost/dist/cli.js estimate "your prompt here" --output 300
-node packages/token-cost/dist/cli.js estimate "your prompt" --json
+node packages/token-cost/dist/cli.js estimate --file prompt.txt
+cat prompt.txt | node packages/token-cost/dist/cli.js estimate --json
 ```
+
+No terminal handy? Open `packages/token-cost/playground/index.html` in a
+browser for the same comparison, zero install.
 
 ## Structure
 
