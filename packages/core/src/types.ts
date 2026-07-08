@@ -38,10 +38,14 @@ export interface CostEstimate {
   readonly inputCost: number;
   readonly outputCost: number;
   readonly totalCost: number;
+  /** True when the count came from the lab's real tokenizer (or counting API). */
+  readonly exact: boolean;
 }
 
 /** A tokenizer strategy. Real tokenizers get wired in per-lab (Day 1 task). */
 export interface Tokenizer {
   readonly lab: Lab;
+  /** True when counts are exact for this lab. Omitted/false = honest estimate. */
+  readonly exact?: boolean;
   count(text: string): number;
 }

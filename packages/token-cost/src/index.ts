@@ -6,31 +6,39 @@ import {
   type Tokenizer,
   isStale,
 } from "@labkit/core";
+import { defaultTokenizers } from "./tokenizers.js";
+
+export {
+  anthropicTokenizer,
+  defaultTokenizers,
+  googleTokenizer,
+  openaiTokenizer,
+  resolveTokenizers,
+  type ResolveOptions,
+} from "./tokenizers.js";
 
 /**
  * Day 1: token + cost comparator across labs.
  *
- * WHAT'S DONE: the shape, the cross-lab comparison, cost math, CLI, tests.
- * WHAT'S YOUR BUILD TODAY: replace `heuristicTokenizer` with real per-lab
- * tokenizers (js-tiktoken for OpenAI, @anthropic-ai/tokenizer, etc.) so the
- * counts are exact rather than approximate. The interface is already here —
- * you're swapping the implementation, not restructuring.
+ * Counts default to the best available per-lab tokenizer (see tokenizers.ts):
+ * exact for OpenAI (tiktoken), honest labelled estimates for Anthropic and
+ * Google, upgradeable to exact API-backed counts via `resolveTokenizers()`.
  */
 
 /**
- * Rough approximation: ~4 characters per token. Good enough to prove the
- * tool end-to-end; NOT accurate enough to ship. This is the seam you replace.
+ * Rough approximation: ~4 characters per token. Kept as the last-resort
+ * fallback and for tests; real per-lab tokenizers are the default.
  */
 export const heuristicTokenizer = (lab: Lab): Tokenizer => ({
   lab,
   count: (text: string) => Math.max(1, Math.ceil(text.length / 4)),
 });
 
-/** Registry of tokenizers per lab. Swap entries as you wire in real ones. */
+/** Registry of tokenizers per lab. Entries here override the defaults. */
 export type TokenizerMap = Partial<Record<Lab, Tokenizer>>;
 
 function tokenizerFor(lab: Lab, overrides?: TokenizerMap): Tokenizer {
-  return overrides?.[lab] ?? heuristicTokenizer(lab);
+  return overrides?.[lab] ?? defaultTokenizers()[lab] ?? heuristicTokenizer(lab);
 }
 
 export interface EstimateOptions {
@@ -48,7 +56,8 @@ export function estimateForModel(
   model: ModelInfo,
   opts: EstimateOptions = {},
 ): CostEstimate {
-  const inputTokens = tokenizerFor(model.lab, opts.tokenizers).count(text);
+  const tokenizer = tokenizerFor(model.lab, opts.tokenizers);
+  const inputTokens = tokenizer.count(text);
   const outputTokens = opts.outputTokens ?? 0;
   const inputCost = (inputTokens / 1_000_000) * model.pricing.inputPerMTok;
   const outputCost = (outputTokens / 1_000_000) * model.pricing.outputPerMTok;
@@ -59,6 +68,7 @@ export function estimateForModel(
     inputCost,
     outputCost,
     totalCost: inputCost + outputCost,
+    exact: tokenizer.exact === true,
   };
 }
 
