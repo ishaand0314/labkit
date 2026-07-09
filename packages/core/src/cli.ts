@@ -26,12 +26,25 @@ export interface CliOptions {
   readonly name: string;
   readonly description: string;
   readonly commands: readonly Command[];
+  /**
+   * Flags that never take a value (e.g. `json`, `help`). Listed here, they
+   * parse as boolean `true` and do NOT swallow the following token — so
+   * `estimate --json "text"` keeps "text" as a positional arg. `json` and
+   * `help` are always treated as boolean.
+   */
+  readonly booleanFlags?: readonly string[];
 }
 
-function parseFlags(tokens: string[]): {
+const ALWAYS_BOOLEAN = ["json", "help"] as const;
+
+function parseFlags(
+  tokens: string[],
+  booleanFlags: readonly string[] = [],
+): {
   args: string[];
   flags: Record<string, string | boolean>;
 } {
+  const booleans = new Set<string>([...ALWAYS_BOOLEAN, ...booleanFlags]);
   const args: string[] = [];
   const flags: Record<string, string | boolean> = {};
   for (let i = 0; i < tokens.length; i++) {
@@ -39,7 +52,7 @@ function parseFlags(tokens: string[]): {
     if (tok?.startsWith("--")) {
       const key = tok.slice(2);
       const next = tokens[i + 1];
-      if (next && !next.startsWith("--")) {
+      if (!booleans.has(key) && next !== undefined && !next.startsWith("--")) {
         flags[key] = next;
         i++;
       } else {
@@ -77,5 +90,5 @@ export async function run(opts: CliOptions, argv: string[]): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  await command.run(parseFlags(rest));
+  await command.run(parseFlags(rest, opts.booleanFlags));
 }

@@ -17,9 +17,20 @@ import { compare, hasStalePricing, resolveTokenizers } from "./index.js";
  * upgraded to exact automatically when ANTHROPIC_API_KEY / GEMINI_API_KEY are set.
  */
 
+/** Thrown for bad user input; caught in run() to print a one-line error. */
+class UsageError extends Error {}
+
 function readText(args: string[], flags: Record<string, string | boolean>): string {
-  if (typeof flags.file === "string") {
-    return readFileSync(flags.file, "utf8");
+  if (flags.file !== undefined) {
+    if (typeof flags.file !== "string") {
+      throw new UsageError("--file requires a filename, e.g. --file prompt.txt");
+    }
+    try {
+      return readFileSync(flags.file, "utf8");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new UsageError(`Cannot read --file "${flags.file}": ${msg}`);
+    }
   }
   const positional = args.join(" ");
   if (positional) return positional;
@@ -30,6 +41,19 @@ function readText(args: string[], flags: Record<string, string | boolean>): stri
   return "";
 }
 
+/** Parse --output into a non-negative integer, or throw a UsageError. */
+function parseOutputTokens(value: string | boolean | undefined): number {
+  if (value === undefined) return 0;
+  if (typeof value !== "string") {
+    throw new UsageError("--output requires a token count, e.g. --output 500");
+  }
+  const n = Number.parseInt(value, 10);
+  if (!Number.isInteger(n) || n < 0) {
+    throw new UsageError(`--output must be a non-negative integer (got "${value}")`);
+  }
+  return n;
+}
+
 function money(value: number): string {
   return `$${value.toFixed(5)}`;
 }
@@ -38,7 +62,19 @@ const estimate: cli.Command = {
   name: "estimate",
   summary: "Compare token count + cost for a string across all labs",
   async run({ args, flags }) {
-    const text = readText(args, flags).trim();
+    let text: string;
+    let outputTokens: number;
+    try {
+      text = readText(args, flags).trim();
+      outputTokens = parseOutputTokens(flags.output);
+    } catch (err) {
+      if (err instanceof UsageError) {
+        console.error(err.message);
+        process.exitCode = 1;
+        return;
+      }
+      throw err;
+    }
     if (!text) {
       console.error(
         'Provide text: token-cost estimate "your prompt" (or --file prompt.txt, or pipe stdin)',
@@ -46,7 +82,6 @@ const estimate: cli.Command = {
       process.exitCode = 1;
       return;
     }
-    const outputTokens = typeof flags.output === "string" ? Number.parseInt(flags.output, 10) : 0;
     const tokenizers = await resolveTokenizers(text);
     const results = compare(text, { outputTokens, tokenizers });
 
@@ -94,6 +129,7 @@ await cli.run(
     name: "token-cost",
     description: "Cross-lab token + cost comparator",
     commands: [estimate],
+    booleanFlags: ["json"],
   },
   process.argv.slice(2),
 );
