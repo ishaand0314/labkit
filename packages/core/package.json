@@ -13,7 +13,23 @@
     }
   },
   "files": ["dist"],
-  "keywords": ["llm", "tokens", "pricing", "openai", "anthropic", "gemini", "models", "registry"],
+  "keywords": [
+    "llm",
+    "tokens",
+    "pricing",
+    "openai",
+    "anthropic",
+    "gemini",
+    "grok",
+    "xai",
+    "open-weight",
+    "models",
+    "registry"
+  ],
+  "homepage": "https://github.com/ishaand0314/labkit/tree/main/packages/core#readme",
+  "bugs": {
+    "url": "https://github.com/ishaand0314/labkit/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ishaand0314/labkit.git",
