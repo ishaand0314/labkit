@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>labkit / token-cost — playground</title>
+  <title>labkit / token-cost playground</title>
   <style>
     :root {
       --bg: #0b0e14;
@@ -240,17 +240,17 @@
   </div>
 
   <script>
-    // Snapshot of packages/core/src/registry.ts MODELS — pricing verified 2026-07-10.
+    // Snapshot of packages/core/src/registry.ts MODELS, pricing verified 2026-07-10.
     // USD per 1M tokens, standard tier (no batch/cache discounts).
     const MODELS = [
-      { id: "gpt-5.6-sol", lab: "openai", label: "GPT-5.6 Sol", inputPerMTok: 5, outputPerMTok: 30, longContext: { thresholdTokens: 272000, inputPerMTok: 10, outputPerMTok: 45 }, limitations: ["Priciest 5.6 tier ($5/$30); 6× Luna's output cost", "Deep reasoning adds latency — not ideal for realtime loops", "Text + image input only; no audio or video I/O", "No fine-tuning; >272K-token prompts bill 2× in / 1.5× out"] },
+      { id: "gpt-5.6-sol", lab: "openai", label: "GPT-5.6 Sol", inputPerMTok: 5, outputPerMTok: 30, longContext: { thresholdTokens: 272000, inputPerMTok: 10, outputPerMTok: 45 }, limitations: ["Priciest 5.6 tier ($5/$30); 6× Luna's output cost", "Deep reasoning adds latency, not ideal for realtime loops", "Text + image input only; no audio or video I/O", "No fine-tuning; >272K-token prompts bill 2× in / 1.5× out"] },
       { id: "gpt-5.6-terra", lab: "openai", label: "GPT-5.6 Terra", inputPerMTok: 2.5, outputPerMTok: 15, longContext: { thresholdTokens: 272000, inputPerMTok: 5, outputPerMTok: 22.5 }, limitations: ["Lower raw reasoning than Sol on the hardest tasks", "Text + image input, text output only; no audio/video", "No fine-tuning available", ">272K-token prompts incur 2× input / 1.5× output surcharge"] },
       { id: "gpt-5.6-luna", lab: "openai", label: "GPT-5.6 Luna", inputPerMTok: 1, outputPerMTok: 6, longContext: { thresholdTokens: 272000, inputPerMTok: 2, outputPerMTok: 9 }, limitations: ["Nano-class: shallowest reasoning of the 5.6 line", "Weaker on hard coding and multi-step tool chains", "Text + image input only; no audio/video", "No fine-tuning; not for frontier-quality outputs"] },
       { id: "gpt-5.5-pro", lab: "openai", label: "GPT-5.5 Pro", inputPerMTok: 30, outputPerMTok: 180, limitations: ["Very expensive ($30/$180) and slow; overkill for routine work", "High latency from extended reasoning; poor for interactive UX", "Prior-gen 5.5 base; older knowledge cutoff than the 5.6 line", "No fine-tuning; text-focused, no audio/video"] },
-      { id: "claude-fable-5", lab: "anthropic", label: "Claude Fable 5", inputPerMTok: 10, outputPerMTok: 50, limitations: ["Priciest tier ($10/$50); above Opus, not the default upgrade", "Turns can run many minutes on hard tasks — plan timeouts/streaming", "Safety classifiers may return stop_reason:refusal; wire a fallback", "Requires 30-day retention; unavailable under ZDR (400s otherwise)"] },
-      { id: "claude-opus-4-8", lab: "anthropic", label: "Claude Opus 4.8", inputPerMTok: 5, outputPerMTok: 25, limitations: ["Expensive at $5/$25 for high-volume or latency-sensitive work", "temperature/top_p/top_k and budget_tokens removed — 400 if sent", "Narrates more than 4.7; add a silence-default for terse agents", "Adaptive thinking off unless set explicitly; omitting runs none"] },
-      { id: "claude-sonnet-5", lab: "anthropic", label: "Claude Sonnet 5", inputPerMTok: 3, outputPerMTok: 15, limitations: ["Non-default temperature/top_p/top_k and budget_tokens rejected (400)", "New tokenizer emits ~30% more tokens — re-baseline cost & max_tokens", "Adaptive thinking on by default when omitted (was off on 4.6)", "Below Opus/Fable on the hardest long-horizon reasoning"] },
-      { id: "claude-haiku-4-5", lab: "anthropic", label: "Claude Haiku 4.5", inputPerMTok: 1, outputPerMTok: 5, limitations: ["200K context and 64K max output — smallest of the four", "No effort parameter; effort:max errors on this model", "Weaker on complex reasoning, agentic, and long-horizon tasks", "Separate rate-limit pool from Haiku 3.x — may need a tier bump"] },
+      { id: "claude-fable-5", lab: "anthropic", label: "Claude Fable 5", inputPerMTok: 10, outputPerMTok: 50, limitations: ["Priciest tier ($10/$50); above Opus, not the default upgrade", "Turns can run many minutes on hard tasks, so plan timeouts/streaming", "Safety classifiers may return stop_reason:refusal; wire a fallback", "Requires 30-day retention; unavailable under ZDR (400s otherwise)"] },
+      { id: "claude-opus-4-8", lab: "anthropic", label: "Claude Opus 4.8", inputPerMTok: 5, outputPerMTok: 25, limitations: ["Expensive at $5/$25 for high-volume or latency-sensitive work", "temperature/top_p/top_k and budget_tokens removed (400 if sent)", "Narrates more than 4.7; add a silence-default for terse agents", "Adaptive thinking off unless set explicitly; omitting runs none"] },
+      { id: "claude-sonnet-5", lab: "anthropic", label: "Claude Sonnet 5", inputPerMTok: 3, outputPerMTok: 15, limitations: ["Non-default temperature/top_p/top_k and budget_tokens rejected (400)", "New tokenizer emits ~30% more tokens, so re-baseline cost & max_tokens", "Adaptive thinking on by default when omitted (was off on 4.6)", "Below Opus/Fable on the hardest long-horizon reasoning"] },
+      { id: "claude-haiku-4-5", lab: "anthropic", label: "Claude Haiku 4.5", inputPerMTok: 1, outputPerMTok: 5, limitations: ["200K context and 64K max output, smallest of the four", "No effort parameter; effort:max errors on this model", "Weaker on complex reasoning, agentic, and long-horizon tasks", "Separate rate-limit pool from Haiku 3.x, may need a tier bump"] },
       { id: "grok-4.3", lab: "xai", label: "Grok 4.3", inputPerMTok: 1.25, outputPerMTok: 2.5, limitations: ["Reasoning by default: hidden thinking inflates billed output tokens and latency", "1M context advertised, but recall degrades on deep long-context retrieval", "Knowledge cutoff ~Dec 2025; xAI recommends web search for newer facts", "Vision is input-only (text + image in); no native image/audio generation"] },
       { id: "grok-4.5", lab: "xai", label: "Grok 4.5", inputPerMTok: 2, outputPerMTok: 6, limitations: ["~2.4× the output price of Grok 4.3 for a smaller 500K context window", "500K context (vs 1M on 4.3); not the pick for the largest documents", "Serving throttled to ~80 tokens/sec; slower on long generations", "Knowledge cutoff unconfirmed in official docs; verify recency-sensitive facts"] },
       { id: "gemini-3.1-pro-preview", lab: "google", label: "Gemini 3.1 Pro", inputPerMTok: 2, outputPerMTok: 12, longContext: { thresholdTokens: 200000, inputPerMTok: 4, outputPerMTok: 18 }, limitations: ["Still a 'preview' id; API surface and pricing may shift before GA", "Priciest of the line; >200k-token prompts double to $4/$18 per 1M", "Higher latency than Flash tiers; overkill for simple/high-volume work", "A distinct -customtools variant is needed for some tool-calling setups"] },
@@ -284,7 +284,7 @@
 
     function render() {
       const text = promptEl.value;
-      // chars/4 heuristic — same rough estimate for every lab.
+      // chars/4 heuristic, same rough estimate for every lab.
       const inputTokens = Math.ceil(text.length / 4);
       const outputTokens = Math.max(0, Math.floor(Number(outEl.value) || 0));
 

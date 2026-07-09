@@ -44,7 +44,7 @@ export interface ModelInfo {
     };
   };
   /**
-   * Short, concrete known limitations — so "cheaper" doesn't silently mean
+   * Short, concrete known limitations, so "cheaper" doesn't silently mean
    * "worse for your task". Each string is one caveat an engineer should weigh
    * before picking this model (e.g. "weaker at long-context recall past ~128k",
    * "no vision", "verbose without a strict system prompt"). Empty/omitted =
@@ -53,8 +53,7 @@ export interface ModelInfo {
   readonly limitations?: readonly string[];
   /**
    * Pricing/limits change often. This is the date the values were last
-   * verified so tools can warn when the data is stale. Day 4's "live model
-   * reference" tool is what keeps this fresh.
+   * verified, so `isStale()` can warn when the data is getting old.
    */
   readonly verified: string; // ISO date
 }
@@ -71,7 +70,7 @@ export interface CostEstimate {
   readonly exact: boolean;
 }
 
-/** A tokenizer strategy — one real implementation per lab (see tokenizers.ts). */
+/** A tokenizer strategy: one real implementation per lab (see tokenizers.ts). */
 export interface Tokenizer {
   readonly lab: Lab;
   /** True when counts are exact for this lab. Omitted/false = honest estimate. */

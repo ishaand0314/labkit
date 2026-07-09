@@ -1,7 +1,7 @@
 import type { Lab, ModelInfo } from "./types.js";
 
 /**
- * The cross-lab model registry — the single source of truth every tool reads.
+ * The cross-lab model registry: the single source of truth every tool reads.
  *
  * Closed-lab pricing verified 2026-07-09; open-weight and newly-added frontier
  * models verified 2026-07-10, against each source below:
@@ -13,7 +13,7 @@ import type { Lab, ModelInfo } from "./types.js";
  * All prices are USD per 1M tokens, standard tier (no batch/cache discounts).
  * `longContext` encodes a lab's surcharge once a prompt crosses a threshold.
  * `limitations` are short, fact-checked caveats so "cheaper" never silently
- * means "worse for your task". Pricing and limits change often — `isStale()`
+ * means "worse for your task". Pricing and limits change often, so `isStale()`
  * warns when `verified` is older than 30 days.
  */
 export const MODELS: readonly ModelInfo[] = [
@@ -31,7 +31,7 @@ export const MODELS: readonly ModelInfo[] = [
     },
     limitations: [
       "Priciest 5.6 tier ($5/$30); 6× Luna's output cost",
-      "Deep reasoning adds latency — not ideal for realtime loops",
+      "Deep reasoning adds latency, not ideal for realtime loops",
       "Text + image input only; no audio or video I/O",
       "No fine-tuning; >272K-token prompts bill 2× in / 1.5× out",
     ],
@@ -100,7 +100,7 @@ export const MODELS: readonly ModelInfo[] = [
     pricing: { inputPerMTok: 10, outputPerMTok: 50 },
     limitations: [
       "Priciest tier ($10/$50); above Opus, not the default upgrade",
-      "Turns can run many minutes on hard tasks — plan timeouts/streaming",
+      "Turns can run many minutes on hard tasks, so plan timeouts/streaming",
       "Safety classifiers may return stop_reason:refusal; wire a fallback",
       "Requires 30-day retention; unavailable under ZDR (400s otherwise)",
     ],
@@ -115,7 +115,7 @@ export const MODELS: readonly ModelInfo[] = [
     pricing: { inputPerMTok: 5, outputPerMTok: 25 },
     limitations: [
       "Expensive at $5/$25 for high-volume or latency-sensitive work",
-      "temperature/top_p/top_k and budget_tokens removed — 400 if sent",
+      "temperature/top_p/top_k and budget_tokens removed (400 if sent)",
       "Narrates more than 4.7; add a silence-default for terse agents",
       "Adaptive thinking off unless set explicitly; omitting runs none",
     ],
@@ -131,7 +131,7 @@ export const MODELS: readonly ModelInfo[] = [
     pricing: { inputPerMTok: 3, outputPerMTok: 15 },
     limitations: [
       "Non-default temperature/top_p/top_k and budget_tokens rejected (400)",
-      "New tokenizer emits ~30% more tokens — re-baseline cost & max_tokens",
+      "New tokenizer emits ~30% more tokens, so re-baseline cost & max_tokens",
       "Adaptive thinking on by default when omitted (was off on 4.6)",
       "Below Opus/Fable on the hardest long-horizon reasoning",
     ],
@@ -145,10 +145,10 @@ export const MODELS: readonly ModelInfo[] = [
     maxOutput: 64_000,
     pricing: { inputPerMTok: 1, outputPerMTok: 5 },
     limitations: [
-      "200K context and 64K max output — smallest of the four",
+      "200K context and 64K max output, smallest of the four",
       "No effort parameter; effort:max errors on this model",
       "Weaker on complex reasoning, agentic, and long-horizon tasks",
-      "Separate rate-limit pool from Haiku 3.x — may need a tier bump",
+      "Separate rate-limit pool from Haiku 3.x, may need a tier bump",
     ],
     verified: "2026-07-10",
   },
@@ -186,7 +186,7 @@ export const MODELS: readonly ModelInfo[] = [
   // ─── Google ────────────────────────────────────────────────────────────
   {
     // Prompts <=200k tokens priced at $2/$12; the whole request jumps to
-    // $4/$18 above that. Preview id — no 3.x Pro GA yet.
+    // $4/$18 above that. Preview id; no 3.x Pro GA yet.
     id: "gemini-3.1-pro-preview",
     lab: "google",
     label: "Gemini 3.1 Pro",
@@ -252,8 +252,8 @@ export const MODELS: readonly ModelInfo[] = [
   },
   // ─── Open-weight (hosted) ──────────────────────────────────────────────
   // Prices are one representative host per model, verified 2026-07-10. The
-  // same weights are served by many providers at different rates — `provider`
-  // records which one; self-host to pay infra cost only.
+  // same weights are served by many providers at different rates, and
+  // `provider` records which one; self-host to pay infra cost only.
   {
     id: "deepseek-v4-pro",
     lab: "open",

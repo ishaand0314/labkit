@@ -20,7 +20,7 @@ export {
 } from "./tokenizers.js";
 
 /**
- * Day 1: token + cost comparator across labs.
+ * Token + cost comparator across labs.
  *
  * Counts default to the best available per-lab tokenizer (see tokenizers.ts):
  * exact for OpenAI (tiktoken), honest labelled estimates for Anthropic and

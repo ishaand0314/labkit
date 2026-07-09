@@ -5,8 +5,7 @@
  * arg parsing each time. Each tool registers named commands; this handles
  * routing, `--help`, `--json`, and unknown-command errors uniformly.
  *
- * Deliberately minimal — if a tool outgrows it, reach for a real parser.
- * Most of these tools won't.
+ * Deliberately minimal. If a tool outgrows it, reach for a real parser.
  */
 
 export interface CommandContext {
@@ -28,7 +27,7 @@ export interface CliOptions {
   readonly commands: readonly Command[];
   /**
    * Flags that never take a value (e.g. `json`, `help`). Listed here, they
-   * parse as boolean `true` and do NOT swallow the following token — so
+   * parse as boolean `true` and do NOT swallow the following token, so
    * `estimate --json "text"` keeps "text" as a positional arg. `json` and
    * `help` are always treated as boolean.
    */
@@ -66,7 +65,7 @@ function parseFlags(
 }
 
 function printHelp(opts: CliOptions): void {
-  console.log(`${opts.name} — ${opts.description}\n`);
+  console.log(`${opts.name}: ${opts.description}\n`);
   console.log("Commands:");
   for (const cmd of opts.commands) {
     console.log(`  ${cmd.name.padEnd(16)} ${cmd.summary}`);

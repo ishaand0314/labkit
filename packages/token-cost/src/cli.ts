@@ -4,8 +4,8 @@ import { cli } from "@labkit/core";
 import { compare, hasStalePricing, resolveTokenizers } from "./index.js";
 
 /**
- * CLI entry. Uses the shared router from @labkit/core so this tool has the
- * same UX (--json, --help) as every other tool in the series.
+ * CLI entry. Uses the shared router from @labkit/core for a consistent UX
+ * (--json, --help, consistent errors).
  *
  * Usage:
  *   token-cost estimate "your prompt here" --output 500
@@ -132,10 +132,10 @@ const estimate: cli.Command = {
     }
 
     if (anyEstimate) {
-      console.log("\n* estimated count — set ANTHROPIC_API_KEY / GEMINI_API_KEY for exact counts.");
+      console.log("\n* estimated count. Set ANTHROPIC_API_KEY / GEMINI_API_KEY for exact counts.");
     }
     if (hasStalePricing(results)) {
-      console.log("\n⚠️  Some pricing data is stale — verify before trusting costs.");
+      console.log("\n⚠️  Some pricing data is stale. Verify before trusting costs.");
     }
   },
 };

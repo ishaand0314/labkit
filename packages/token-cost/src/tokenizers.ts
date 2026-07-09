@@ -7,10 +7,10 @@ import type { TokenizerMap } from "./index.js";
 /**
  * Per-lab tokenizers, honestly labelled.
  *
- * - OpenAI: js-tiktoken `o200k_base` — exact, offline (GPT-4o and later).
- * - Anthropic: `@anthropic-ai/tokenizer` — the Claude-2-era local tokenizer.
+ * - OpenAI: js-tiktoken `o200k_base`, exact and offline (GPT-4o and later).
+ * - Anthropic: `@anthropic-ai/tokenizer`, the Claude-2-era local tokenizer.
  *   Close, but NOT exact for Claude 4+ models, so it stays labelled an estimate.
- * - Google: no offline tokenizer exists — a ~4 chars/token heuristic, labelled
+ * - Google: no offline tokenizer exists, so a ~4 chars/token heuristic, labelled
  *   estimate.
  *
  * `resolveTokenizers()` upgrades Anthropic/Google to exact API-backed counts
@@ -19,7 +19,7 @@ import type { TokenizerMap } from "./index.js";
  * NOTE on comparability: the offline OpenAI count is raw-text tokens. The
  * exact API-backed Anthropic/Google counts are request-level (they count a
  * one-user-message request), so they include a few tokens of message
- * scaffolding — expect Anthropic exact counts to run a few tokens higher than
+ * scaffolding, so expect Anthropic exact counts to run a few tokens higher than
  * the equivalent raw-text count. For short prompts that gap is visible; for
  * realistic prompts it is noise.
  */
@@ -36,7 +36,7 @@ export const openaiTokenizer = (): Tokenizer => ({
   },
 });
 
-/** Anthropic counts via the local Claude-2-era tokenizer — good estimate, not exact. */
+/** Anthropic counts via the local Claude-2-era tokenizer: good estimate, not exact. */
 export const anthropicTokenizer = (): Tokenizer => ({
   lab: "anthropic",
   exact: false,
@@ -54,7 +54,7 @@ export const googleTokenizer = (): Tokenizer => ({
  * xAI (Grok) ships no public offline tokenizer, so counts here are a
  * ~4 chars/token estimate. Labelled estimate, never claimed exact. (Grok's
  * BPE is close to o200k; if you need a tighter number, count with the OpenAI
- * tokenizer as a proxy — but we keep it an honest estimate rather than imply
+ * tokenizer as a proxy, but we keep it an honest estimate rather than imply
  * exactness.)
  */
 export const xaiTokenizer = (): Tokenizer => ({
@@ -166,7 +166,7 @@ async function countGeminiViaApi(
  *
  * Starts from `defaultTokenizers()` and upgrades Anthropic / Google to exact,
  * API-backed counts when a key is available. API failures (or missing keys)
- * silently keep the offline fallback — this never blocks and never throws.
+ * silently keep the offline fallback. This never blocks and never throws.
  *
  * NOTE: the upgraded tokenizers return a count valid only for the `text`
  * passed here (the APIs count a fixed string). Fine for a CLI invocation;

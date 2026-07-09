@@ -36,12 +36,6 @@ labkit/
 └── biome.json         # one tool for lint + format
 ```
 
-## CI workflow
+## License
 
-The GitHub Actions CI (`.github/workflows/ci.yml`) is staged in `.github/workflows-pending/ci.yml.txt`. It was not pushed automatically because the push token lacked the `workflow` scope. To enable CI:
-
-```bash
-gh auth refresh -h github.com -s workflow   # authorize in browser
-git mv .github/workflows-pending/ci.yml.txt .github/workflows/ci.yml
-git commit -m "Add CI workflow" && git push
-```
+MIT
