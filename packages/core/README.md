@@ -13,4 +13,4 @@ not need to install this package directly.
 
 See the [root README](../../README.md) for the full labkit overview.
 
-MIT © Siddhant Das
+MIT © Ishaan Das

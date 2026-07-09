@@ -16,7 +16,7 @@
   "keywords": ["llm", "tokens", "pricing", "openai", "anthropic", "gemini", "models", "registry"],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/siddhantdas/labkit.git",
+    "url": "git+https://github.com/ishaand0314/labkit.git",
     "directory": "packages/core"
   },
   "engines": {
