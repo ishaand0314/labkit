@@ -1,6 +1,6 @@
-# Adding a tool (your daily ritual)
+# Adding a tool
 
-Each day is the same five moves. Budget ~20 min of setup, then build.
+Every package in labkit follows the same five moves.
 
 ## 1. Scaffold the package
 
@@ -24,18 +24,17 @@ a thin wrapper that calls `cli.run(...)` from `@labkit/core`.
 
 ## 4. Write tests as the spec
 
-Before implementing, write the tests that define "done". Let Claude Code fill in
-the implementation until `pnpm test` is green.
+Write the tests that define "done" before implementing, then fill in the
+implementation until `pnpm test` is green.
 
 ## 5. Promote shared knowledge to core
 
 If you wrote anything another tool will need (a lab's message shape, a schema
-map), move it into `@labkit/core`. That's what makes tomorrow faster.
+map), move it into `@labkit/core`. That keeps the shared layer compounding.
 
 ## Ship checklist
 
 - [ ] `pnpm build` green
 - [ ] `pnpm lint` green
 - [ ] `pnpm test` green
-- [ ] Package `README.md` with a one-line pitch + usage example + one screenshot
-- [ ] LinkedIn post drafted (problem → what you built → one honest limitation)
+- [ ] Package `README.md` with a usage example
