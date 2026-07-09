@@ -16,7 +16,8 @@
   "keywords": ["llm", "tokens", "pricing", "openai", "anthropic", "gemini", "models", "registry"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/siddhantdas/labkit"
+    "url": "git+https://github.com/siddhantdas/labkit.git",
+    "directory": "packages/core"
   },
   "engines": {
     "node": ">=20"
@@ -25,6 +26,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "prepublishOnly": "tsc --build"
   }
 }

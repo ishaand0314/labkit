@@ -29,7 +29,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/siddhantdas/labkit"
+    "url": "git+https://github.com/siddhantdas/labkit.git",
+    "directory": "packages/token-cost"
   },
   "engines": {
     "node": ">=20"
@@ -38,11 +39,12 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "prepublishOnly": "tsc --build"
   },
   "dependencies": {
     "@anthropic-ai/tokenizer": "^0.0.4",
-    "@labkit/core": "workspace:*",
+    "@labkit/core": "workspace:^",
     "js-tiktoken": "^1.0.21"
   }
 }
