@@ -204,9 +204,12 @@
     </div>
 
     <footer>
-      ~ token counts are chars÷4 estimates for every lab — the
-      <code>token-cost</code> CLI gives exact tokenizer counts. Pricing is USD
-      per 1M tokens, standard tier, snapshot verified 2026-07-09.
+      ~ token counts here are chars÷4 estimates for every lab. The
+      <code>token-cost</code> CLI gives exact OpenAI counts (via tiktoken), and
+      exact Anthropic/Google counts when <code>ANTHROPIC_API_KEY</code> /
+      <code>GEMINI_API_KEY</code> are set (otherwise labelled estimates).
+      Pricing is USD per 1M tokens, standard tier, snapshot verified 2026-07-09;
+      Gemini 3.1 Pro jumps to $4/$18 above 200k input tokens.
     </footer>
   </div>
 
@@ -220,7 +223,7 @@
       { id: "claude-opus-4-8", lab: "anthropic", label: "Claude Opus 4.8", inputPerMTok: 5, outputPerMTok: 25 },
       { id: "claude-sonnet-5", lab: "anthropic", label: "Claude Sonnet 5", inputPerMTok: 3, outputPerMTok: 15 },
       { id: "claude-haiku-4-5", lab: "anthropic", label: "Claude Haiku 4.5", inputPerMTok: 1, outputPerMTok: 5 },
-      { id: "gemini-3.1-pro-preview", lab: "google", label: "Gemini 3.1 Pro", inputPerMTok: 2, outputPerMTok: 12 },
+      { id: "gemini-3.1-pro-preview", lab: "google", label: "Gemini 3.1 Pro", inputPerMTok: 2, outputPerMTok: 12, longContext: { thresholdTokens: 200000, inputPerMTok: 4, outputPerMTok: 18 } },
       { id: "gemini-3.5-flash", lab: "google", label: "Gemini 3.5 Flash", inputPerMTok: 1.5, outputPerMTok: 9 },
       { id: "gemini-3.1-flash-lite", lab: "google", label: "Gemini 3.1 Flash-Lite", inputPerMTok: 0.25, outputPerMTok: 1.5 },
     ];
@@ -245,12 +248,17 @@
       charMetaEl.textContent =
         fmtInt(text.length) + " chars → ~" + fmtInt(inputTokens) + " tokens (chars÷4)";
 
-      const rows = MODELS.map((m) => ({
-        ...m,
-        total:
-          (inputTokens / 1e6) * m.inputPerMTok +
-          (outputTokens / 1e6) * m.outputPerMTok,
-      })).sort((a, b) => a.total - b.total);
+      const rows = MODELS.map((m) => {
+        // Long-context tier: whole request priced higher above the threshold.
+        const r =
+          m.longContext && inputTokens > m.longContext.thresholdTokens ? m.longContext : m;
+        return {
+          ...m,
+          inRate: r.inputPerMTok,
+          outRate: r.outputPerMTok,
+          total: (inputTokens / 1e6) * r.inputPerMTok + (outputTokens / 1e6) * r.outputPerMTok,
+        };
+      }).sort((a, b) => a.total - b.total);
 
       const cheapest = rows[0];
       const priciest = rows[rows.length - 1];
@@ -265,8 +273,8 @@
             "</td>" +
             '<td class="num">~' + fmtInt(inputTokens) + "</td>" +
             '<td class="num">~' + fmtInt(outputTokens) + "</td>" +
-            '<td class="num">' + fmtRate(m.inputPerMTok) + "</td>" +
-            '<td class="num">' + fmtRate(m.outputPerMTok) + "</td>" +
+            '<td class="num">' + fmtRate(m.inRate) + "</td>" +
+            '<td class="num">' + fmtRate(m.outRate) + "</td>" +
             '<td class="num total">' + fmtUsd(m.total) + "</td>" +
             "</tr>"
         )

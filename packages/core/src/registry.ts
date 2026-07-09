@@ -72,13 +72,18 @@ export const MODELS: readonly ModelInfo[] = [
   },
   // ─── Google ────────────────────────────────────────────────────────────
   {
-    // Prompts <=200k tokens; $4/$18 above that. Preview id — no 3.x Pro GA yet.
+    // Prompts <=200k tokens priced at $2/$12; the whole request jumps to
+    // $4/$18 above that. Preview id — no 3.x Pro GA yet.
     id: "gemini-3.1-pro-preview",
     lab: "google",
     label: "Gemini 3.1 Pro",
     contextWindow: 1_048_576,
     maxOutput: 65_536,
-    pricing: { inputPerMTok: 2, outputPerMTok: 12 },
+    pricing: {
+      inputPerMTok: 2,
+      outputPerMTok: 12,
+      longContext: { thresholdTokens: 200_000, inputPerMTok: 4, outputPerMTok: 18 },
+    },
     verified: "2026-07-09",
   },
   {

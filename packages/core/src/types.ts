@@ -21,6 +21,16 @@ export interface ModelInfo {
   readonly pricing: {
     readonly inputPerMTok: number;
     readonly outputPerMTok: number;
+    /**
+     * Some labs charge a higher rate once a prompt crosses a token threshold
+     * (e.g. Gemini Pro above 200k input tokens). When the input token count
+     * exceeds `thresholdTokens`, the whole request is priced at these rates.
+     */
+    readonly longContext?: {
+      readonly thresholdTokens: number;
+      readonly inputPerMTok: number;
+      readonly outputPerMTok: number;
+    };
   };
   /**
    * Pricing/limits change often. This is the date the values were last
@@ -42,7 +52,7 @@ export interface CostEstimate {
   readonly exact: boolean;
 }
 
-/** A tokenizer strategy. Real tokenizers get wired in per-lab (Day 1 task). */
+/** A tokenizer strategy — one real implementation per lab (see tokenizers.ts). */
 export interface Tokenizer {
   readonly lab: Lab;
   /** True when counts are exact for this lab. Omitted/false = honest estimate. */

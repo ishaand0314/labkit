@@ -46,7 +46,7 @@ export interface EstimateOptions {
   readonly outputTokens?: number;
   /** Restrict to specific models by id. Default: all. */
   readonly models?: readonly string[];
-  /** Provide real tokenizers here to override the heuristic. */
+  /** Override the default per-lab tokenizers (e.g. exact API-backed counts). */
   readonly tokenizers?: TokenizerMap;
 }
 
@@ -59,8 +59,13 @@ export function estimateForModel(
   const tokenizer = tokenizerFor(model.lab, opts.tokenizers);
   const inputTokens = tokenizer.count(text);
   const outputTokens = opts.outputTokens ?? 0;
-  const inputCost = (inputTokens / 1_000_000) * model.pricing.inputPerMTok;
-  const outputCost = (outputTokens / 1_000_000) * model.pricing.outputPerMTok;
+  // Pick the long-context tier when the prompt crosses the threshold (some
+  // labs price the whole request at the higher rate above it).
+  const { longContext } = model.pricing;
+  const rates =
+    longContext && inputTokens > longContext.thresholdTokens ? longContext : model.pricing;
+  const inputCost = (inputTokens / 1_000_000) * rates.inputPerMTok;
+  const outputCost = (outputTokens / 1_000_000) * rates.outputPerMTok;
   return {
     model,
     inputTokens,
