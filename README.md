@@ -54,3 +54,15 @@ labkit/
 ## The one rule that keeps this fast
 
 **Shared knowledge lives in `@labkit/core`.** When Day 2 needs each lab's message shape, it goes in `core` so Day 3's tool-schema converter can reuse it. By Day 5 you're assembling from parts you already built, not starting over. See [`docs/architecture.md`](docs/architecture.md).
+
+# CI workflow
+
+The GitHub Actions CI (`.github/workflows/ci.yml`) is staged in
+`.github/workflows-pending/ci.yml.txt`. It was not pushed automatically
+because the push token lacked the `workflow` scope. To enable CI:
+
+```bash
+gh auth refresh -h github.com -s workflow   # authorize in browser
+git mv .github/workflows-pending/ci.yml.txt .github/workflows/ci.yml
+git commit -m "Add CI workflow" && git push
+```
