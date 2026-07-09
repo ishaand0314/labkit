@@ -11,6 +11,7 @@ import { compare, hasStalePricing, resolveTokenizers } from "./index.js";
  *   token-cost estimate "your prompt here" --output 500
  *   token-cost estimate --file prompt.txt
  *   cat prompt.txt | token-cost estimate
+ *   token-cost estimate "your prompt" --notes   # show per-model limitations
  *   token-cost estimate "your prompt" --json
  *
  * Counts: OpenAI is exact (tiktoken). Anthropic/Google are labelled estimates,
@@ -115,6 +116,21 @@ const estimate: cli.Command = {
         );
       }
     }
+
+    // --notes: so "cheaper" doesn't blindly mean "worse for your task".
+    if (flags.notes) {
+      const withNotes = results.filter((r) => (r.model.limitations?.length ?? 0) > 0);
+      if (withNotes.length > 0) {
+        console.log("\nKnown limitations (weigh before picking on price alone):");
+        for (const r of withNotes) {
+          console.log(`  ${r.model.label}`);
+          for (const lim of r.model.limitations ?? []) console.log(`    • ${lim}`);
+        }
+      }
+    } else if (results.some((r) => (r.model.limitations?.length ?? 0) > 0)) {
+      console.log("\nRun with --notes to see each model's known limitations.");
+    }
+
     if (anyEstimate) {
       console.log("\n* estimated count — set ANTHROPIC_API_KEY / GEMINI_API_KEY for exact counts.");
     }
@@ -129,7 +145,7 @@ await cli.run(
     name: "token-cost",
     description: "Cross-lab token + cost comparator",
     commands: [estimate],
-    booleanFlags: ["json"],
+    booleanFlags: ["json", "notes"],
   },
   process.argv.slice(2),
 );

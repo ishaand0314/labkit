@@ -50,12 +50,38 @@ export const googleTokenizer = (): Tokenizer => ({
   count: (text: string) => Math.max(1, Math.ceil(text.length / 4)),
 });
 
+/**
+ * xAI (Grok) ships no public offline tokenizer, so counts here are a
+ * ~4 chars/token estimate. Labelled estimate, never claimed exact. (Grok's
+ * BPE is close to o200k; if you need a tighter number, count with the OpenAI
+ * tokenizer as a proxy — but we keep it an honest estimate rather than imply
+ * exactness.)
+ */
+export const xaiTokenizer = (): Tokenizer => ({
+  lab: "xai",
+  exact: false,
+  count: (text: string) => Math.max(1, Math.ceil(text.length / 4)),
+});
+
+/**
+ * Open-weight models (Llama, DeepSeek, Qwen, Mistral, GLM) each ship their own
+ * SentencePiece/BPE tokenizer with no reliable offline JS port, so counts here
+ * are a ~4 chars/token estimate. Labelled estimate, never claimed exact.
+ */
+export const openTokenizer = (): Tokenizer => ({
+  lab: "open",
+  exact: false,
+  count: (text: string) => Math.max(1, Math.ceil(text.length / 4)),
+});
+
 /** The default map: best available offline tokenizer per lab. */
 export function defaultTokenizers(): TokenizerMap {
   return {
     openai: openaiTokenizer(),
     anthropic: anthropicTokenizer(),
     google: googleTokenizer(),
+    xai: xaiTokenizer(),
+    open: openTokenizer(),
   };
 }
 

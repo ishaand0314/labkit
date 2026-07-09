@@ -5,10 +5,15 @@
  * reference all speak the same `Lab` and `ModelId`.
  */
 
-/** The frontier labs we support. Add one here and every tool can see it. */
-export type Lab = "openai" | "anthropic" | "google";
+/**
+ * The model providers we support. Add one here and every tool can see it.
+ * `openai`, `anthropic`, `google`, and `xai` are first-party closed labs.
+ * `open` is a virtual "lab" for open-weight models (Llama, DeepSeek, Qwen,
+ * Mistral, GLM…) priced at a representative hosted provider's rates.
+ */
+export type Lab = "openai" | "anthropic" | "google" | "xai" | "open";
 
-export const LABS: readonly Lab[] = ["openai", "anthropic", "google"] as const;
+export const LABS: readonly Lab[] = ["openai", "anthropic", "google", "xai", "open"] as const;
 
 /** A model's static metadata. Prices are USD per 1M tokens. */
 export interface ModelInfo {
@@ -18,6 +23,12 @@ export interface ModelInfo {
   readonly label: string;
   readonly contextWindow: number;
   readonly maxOutput: number;
+  /**
+   * Which hosted provider the pricing is quoted from. Meaningful for
+   * open-weight models (`lab: "open"`), where the same weights are served by
+   * many hosts at different prices; omitted for a lab's first-party models.
+   */
+  readonly provider?: string;
   readonly pricing: {
     readonly inputPerMTok: number;
     readonly outputPerMTok: number;
@@ -32,6 +43,14 @@ export interface ModelInfo {
       readonly outputPerMTok: number;
     };
   };
+  /**
+   * Short, concrete known limitations — so "cheaper" doesn't silently mean
+   * "worse for your task". Each string is one caveat an engineer should weigh
+   * before picking this model (e.g. "weaker at long-context recall past ~128k",
+   * "no vision", "verbose without a strict system prompt"). Empty/omitted =
+   * no notable caveats recorded.
+   */
+  readonly limitations?: readonly string[];
   /**
    * Pricing/limits change often. This is the date the values were last
    * verified so tools can warn when the data is stale. Day 4's "live model

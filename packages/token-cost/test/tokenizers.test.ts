@@ -5,8 +5,10 @@ import {
   anthropicTokenizer,
   defaultTokenizers,
   googleTokenizer,
+  openTokenizer,
   openaiTokenizer,
   resolveTokenizers,
+  xaiTokenizer,
 } from "../src/tokenizers.js";
 
 const PANGRAM = "The quick brown fox jumps over the lazy dog.";
@@ -51,6 +53,27 @@ describe("offline tokenizers", () => {
     const tok = googleTokenizer();
     expect(tok.count(PANGRAM)).toBeGreaterThanOrEqual(1);
     expect(tok.exact).toBeFalsy();
+  });
+
+  it("xaiTokenizer returns >= 1 for non-empty text and is not exact", () => {
+    const tok = xaiTokenizer();
+    expect(tok.lab).toBe("xai");
+    expect(tok.count(PANGRAM)).toBeGreaterThanOrEqual(1);
+    expect(tok.exact).toBeFalsy();
+  });
+
+  it("openTokenizer returns >= 1 for non-empty text and is not exact", () => {
+    const tok = openTokenizer();
+    expect(tok.lab).toBe("open");
+    expect(tok.count(PANGRAM)).toBeGreaterThanOrEqual(1);
+    expect(tok.exact).toBeFalsy();
+  });
+
+  it("defaultTokenizers provides a tokenizer for every lab", () => {
+    const map = defaultTokenizers();
+    for (const lab of ["openai", "anthropic", "google", "xai", "open"] as const) {
+      expect(map[lab], `no default tokenizer for ${lab}`).toBeDefined();
+    }
   });
 });
 
