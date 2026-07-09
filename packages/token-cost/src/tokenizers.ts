@@ -7,13 +7,21 @@ import type { TokenizerMap } from "./index.js";
 /**
  * Per-lab tokenizers, honestly labelled.
  *
- * - OpenAI: js-tiktoken `o200k_base` — exact, offline.
+ * - OpenAI: js-tiktoken `o200k_base` — exact, offline (GPT-4o and later).
  * - Anthropic: `@anthropic-ai/tokenizer` — the Claude-2-era local tokenizer.
  *   Close, but NOT exact for Claude 4+ models, so it stays labelled an estimate.
- * - Google: no offline tokenizer exists — calibrated heuristic, labelled estimate.
+ * - Google: no offline tokenizer exists — a ~4 chars/token heuristic, labelled
+ *   estimate.
  *
  * `resolveTokenizers()` upgrades Anthropic/Google to exact API-backed counts
  * when the relevant API key is present. It never blocks on a missing key.
+ *
+ * NOTE on comparability: the offline OpenAI count is raw-text tokens. The
+ * exact API-backed Anthropic/Google counts are request-level (they count a
+ * one-user-message request), so they include a few tokens of message
+ * scaffolding — expect Anthropic exact counts to run a few tokens higher than
+ * the equivalent raw-text count. For short prompts that gap is visible; for
+ * realistic prompts it is noise.
  */
 
 let encoder: Tiktoken | undefined;
@@ -35,7 +43,7 @@ export const anthropicTokenizer = (): Tokenizer => ({
   count: (text: string) => Math.max(1, anthropicLocalCount(text)),
 });
 
-/** Google has no offline tokenizer; ~4 chars/token is the honest fallback. */
+/** Google has no offline tokenizer; a ~4 chars/token heuristic is the honest fallback. */
 export const googleTokenizer = (): Tokenizer => ({
   lab: "google",
   exact: false,
@@ -107,7 +115,11 @@ async function countGeminiViaApi(
   fetchFn: typeof fetch,
   timeoutMs: number,
 ): Promise<number> {
-  const model = modelsByLab("google")[0]?.id ?? "gemini-2.0-flash";
+  // Registry ids may be preview aliases; the countTokens endpoint needs a
+  // model path it recognises. Strip a "-preview" suffix and fall back to a
+  // stable Flash id so a preview alias in the registry doesn't 400 the count.
+  const registryId = modelsByLab("google")[0]?.id;
+  const model = registryId?.replace(/-preview$/, "") ?? "gemini-3.5-flash";
   const body = await fetchJson(
     fetchFn,
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:countTokens`,

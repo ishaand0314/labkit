@@ -2,7 +2,27 @@
 
 **One command to see what the same prompt costs — token count and USD — across OpenAI, Anthropic, and Google.**
 
-![token-cost table](./screenshot.png)
+```text
+$ token-cost estimate "Summarize this quarterly earnings report and flag the three biggest risks." --output 400
+
+Input: 74 chars, output assumption: 400 tok
+
+Model                   In tok  Out tok      Total
+─────────────────────────────────────────────────────────────
+Gemini 3.1 Flash-Lite      19*      400   $0.00060  ← cheapest
+GPT-5.4 mini                14      400   $0.00181
+Claude Haiku 4.5           15*      400   $0.00201
+Gemini 3.5 Flash           19*      400   $0.00363
+Gemini 3.1 Pro             19*      400   $0.00484
+GPT-5.4                     14      400   $0.00604
+Claude Sonnet 5            15*      400   $0.00605
+Claude Opus 4.8            15*      400   $0.01008
+GPT-5.5                     14      400   $0.01207
+
+Gemini 3.1 Flash-Lite is 20× cheaper than GPT-5.5 for this prompt.
+
+* estimated count — set ANTHROPIC_API_KEY / GEMINI_API_KEY for exact counts.
+```
 
 ## Install
 
@@ -31,31 +51,11 @@ cat prompt.txt | token-cost estimate --output 500
 token-cost estimate "your prompt" --json
 ```
 
-Example output:
-
-```
-Input: 84 chars, output assumption: 300 tok
-
-Model                   In tok  Out tok      Total
-─────────────────────────────────────────────────────────────
-Gemini 3.1 Flash-Lite      21*      300   $0.00046  ← cheapest
-GPT-5.4 mini                16      300   $0.00136
-Claude Haiku 4.5           17*      300   $0.00152
-Gemini 3.5 Flash           21*      300   $0.00273
-Gemini 3.1 Pro             21*      300   $0.00364
-GPT-5.4                     16      300   $0.00454
-Claude Sonnet 5            17*      300   $0.00455
-Claude Opus 4.8            17*      300   $0.00758
-GPT-5.5                     16      300   $0.00908
-
-Gemini 3.1 Flash-Lite is 20× cheaper than GPT-5.5 for this prompt.
-
-* estimated count — set ANTHROPIC_API_KEY / GEMINI_API_KEY for exact counts.
-```
-
-Pricing covers 9 current models (GPT-5.5 / 5.4 / 5.4 mini, Claude Opus 4.8 /
-Sonnet 5 / Haiku 4.5, Gemini 3.1 Pro / 3.5 Flash / 3.1 Flash-Lite), verified
-2026-07-09 in `@labkit/core`'s registry.
+The table at the top of this README is real output from the first command
+above. Pricing covers 9 current models (GPT-5.5 / 5.4 / 5.4 mini, Claude Opus
+4.8 / Sonnet 5 / Haiku 4.5, Gemini 3.1 Pro / 3.5 Flash / 3.1 Flash-Lite),
+verified 2026-07-09 in `@labkit/core`'s registry. Gemini 3.1 Pro switches to its
+long-context tier ($4/$18 per 1M) automatically above 200k input tokens.
 
 ## Exact vs estimated counts
 
