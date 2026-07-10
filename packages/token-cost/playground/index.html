@@ -6,183 +6,227 @@
   <title>labkit / token-cost playground</title>
   <style>
     :root {
-      --bg: #0b0e14;
-      --panel: #11151f;
-      --panel-2: #161b28;
-      --border: #232a3a;
+      --bg: #0a0c12;
+      --panel: #0e1119;
+      --panel-2: #141926;
+      --border: #1e2534;
+      --border-bright: #2b3446;
       --text: #e6e9f0;
       --muted: #8b93a7;
       --faint: #5b6377;
-      --accent: #4cc38a;
-      --accent-dim: rgba(76, 195, 138, 0.12);
+      --accent: #a78bfa;
+      --accent-bright: #c4b5fd;
+      --accent-dim: rgba(167, 139, 250, 0.09);
       --openai: #7cb8ff;
       --anthropic: #f0a56c;
       --google: #b39ddb;
       --xai: #d98b9e;
       --open: #6fd7c4;
-      --mono: "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+      --mono: "SF Mono", "Cascadia Code", "JetBrains Mono", "Fira Code", Consolas, monospace;
       --sans: -apple-system, "Segoe UI", Inter, Roboto, sans-serif;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    ::selection { background: rgba(167, 139, 250, 0.28); }
     body {
-      background: var(--bg);
+      background:
+        radial-gradient(1200px 480px at 50% -10%, rgba(167, 139, 250, 0.05), transparent 70%),
+        var(--bg);
       color: var(--text);
-      font-family: var(--sans);
+      font-family: var(--mono);
       line-height: 1.5;
       min-height: 100vh;
-      padding: 48px 24px 64px;
+      padding: 40px 24px 56px;
+      -webkit-font-smoothing: antialiased;
     }
-    .wrap { max-width: 880px; margin: 0 auto; }
+    .wrap { max-width: 900px; margin: 0 auto; }
+
     header {
       display: flex;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 6px;
+      align-items: center;
+      gap: 10px;
+      color: var(--faint);
+      font-size: 13px;
     }
-    header .logo {
-      font-family: var(--mono);
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
+    header .sigil { color: var(--accent); }
+    header .cmd { color: var(--text); }
+    header .cmd b { color: var(--accent-bright); font-weight: 600; }
+    header .caret {
+      width: 8px;
+      height: 15px;
+      background: var(--accent);
+      display: inline-block;
+      transform: translateY(2px);
+      animation: blink 1.15s steps(1) infinite;
     }
-    header .logo .dim { color: var(--faint); font-weight: 400; }
-    header .badge {
-      font-family: var(--mono);
-      font-size: 11px;
+    @keyframes blink { 50% { opacity: 0; } }
+    header .rule { flex: 1; height: 1px; background: var(--border); }
+    header .ver { font-size: 11px; color: var(--faint); letter-spacing: 0.04em; }
+
+    .tagline {
+      font-family: var(--sans);
       color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      padding: 1px 10px;
+      font-size: 14.5px;
+      line-height: 1.55;
+      margin: 14px 0 30px;
+      max-width: 62ch;
     }
-    .tagline { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+    .tagline b { color: var(--text); font-weight: 600; }
 
     .inputs {
       display: grid;
-      grid-template-columns: 1fr 180px;
+      grid-template-columns: 1fr 176px;
       gap: 16px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     @media (max-width: 640px) { .inputs { grid-template-columns: 1fr; } }
     label {
       display: block;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
+      letter-spacing: 0.1em;
+      color: var(--faint);
       margin-bottom: 8px;
     }
+    label::before { content: "› "; color: var(--accent); }
     textarea, input[type="number"] {
       width: 100%;
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 8px;
       color: var(--text);
       font-family: var(--mono);
       font-size: 13px;
+      line-height: 1.6;
       padding: 12px 14px;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-    textarea:focus, input[type="number"]:focus { border-color: var(--accent); }
-    textarea { resize: vertical; min-height: 128px; }
+    textarea:focus, input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+    textarea { resize: vertical; min-height: 116px; }
     .meta {
-      font-family: var(--mono);
       font-size: 11px;
       color: var(--faint);
       margin-top: 8px;
     }
+    .meta b { color: var(--muted); font-weight: 500; }
 
+    /* Summary reads like a line of program output, not a banner. */
     .summary {
-      background: var(--accent-dim);
-      border: 1px solid rgba(76, 195, 138, 0.3);
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-size: 14px;
-      margin-bottom: 20px;
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      padding: 14px 2px 16px;
+      margin-bottom: 14px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
     }
-    .summary strong { color: var(--accent); }
-    .summary .x { font-family: var(--mono); font-weight: 700; color: var(--accent); }
+    .summary .lead { color: var(--faint); }
+    .summary .pick { color: var(--accent-bright); font-weight: 600; }
+    .summary .cost {
+      color: var(--text);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .summary .spread { color: var(--accent); font-weight: 600; }
+    .summary .sep { color: var(--border-bright); }
 
     .table-card {
-      background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 10px;
       overflow-x: auto;
+      background: var(--panel);
     }
-    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-    th, td { padding: 10px 16px; white-space: nowrap; }
-    th {
+    table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+    th, td { padding: 9px 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    thead th {
+      position: sticky;
+      top: 0;
       text-align: left;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
+      letter-spacing: 0.09em;
+      color: var(--faint);
+      background: var(--panel-2);
       border-bottom: 1px solid var(--border);
+      padding-top: 11px;
+      padding-bottom: 11px;
     }
     th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
-    td.num { font-family: var(--mono); font-size: 13px; }
-    tbody tr { border-bottom: 1px solid rgba(35, 42, 58, 0.5); }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr.cheapest { background: var(--accent-dim); }
-    tbody tr.cheapest td.model .name { color: var(--accent); font-weight: 600; }
+    td.num { color: var(--muted); }
+    tbody tr { border-top: 1px solid var(--border); transition: background 0.1s; }
+    tbody tr:first-child { border-top: none; }
+    tbody tr:hover { background: rgba(255, 255, 255, 0.018); }
+    /* Cheapest row: an accent bar down the left edge, no fill. */
+    tbody tr.cheapest td { background: var(--accent-dim); }
+    tbody tr.cheapest td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
+    tbody tr.cheapest td.model .name { color: var(--accent-bright); font-weight: 600; }
+    tbody tr.cheapest td.total { color: var(--text); }
+
+    td.model { white-space: normal; overflow: visible; }
     td.model .name { font-weight: 500; }
+    td.model .mark { color: var(--accent); margin-right: 6px; }
     .lab {
       display: inline-block;
-      font-family: var(--mono);
-      font-size: 10px;
+      font-size: 9.5px;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      border-radius: 4px;
-      padding: 1px 7px;
+      letter-spacing: 0.07em;
       margin-right: 10px;
-      min-width: 72px;
-      text-align: center;
+      min-width: 66px;
     }
-    .lab.openai    { color: var(--openai);    background: rgba(124, 184, 255, 0.1); }
-    .lab.anthropic { color: var(--anthropic); background: rgba(240, 165, 108, 0.1); }
-    .lab.google    { color: var(--google);    background: rgba(179, 157, 219, 0.1); }
-    .lab.xai       { color: var(--xai);       background: rgba(217, 139, 158, 0.1); }
-    .lab.open      { color: var(--open);      background: rgba(111, 215, 196, 0.1); }
-    .tag {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--accent);
-      margin-left: 8px;
-    }
-    .total { font-weight: 600; }
+    .lab::before { content: "■ "; }
+    .lab.openai    { color: var(--openai); }
+    .lab.anthropic { color: var(--anthropic); }
+    .lab.google    { color: var(--google); }
+    .lab.xai       { color: var(--xai); }
+    .lab.open      { color: var(--open); }
+
+    td.total { color: var(--text); font-weight: 600; font-size: 13.5px; }
+
     td.catch {
       white-space: normal;
-      max-width: 320px;
+      overflow: visible;
       color: var(--muted);
+      font-family: var(--sans);
       font-size: 12.5px;
-      line-height: 1.35;
+      line-height: 1.4;
       cursor: help;
     }
-    td.catch .catch-text { color: var(--text); opacity: 0.82; }
-    td.catch .catch-more {
-      display: inline-block;
-      margin-left: 6px;
-      font-family: var(--mono);
-      font-size: 10.5px;
+    td.catch .count {
       color: var(--faint);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0 5px;
+      font-family: var(--mono);
+      font-size: 11px;
     }
 
     footer {
-      margin-top: 20px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-family: var(--sans);
       font-size: 12px;
+      line-height: 1.6;
       color: var(--faint);
+      display: grid;
+      gap: 4px;
     }
+    footer .line b { color: var(--muted); font-weight: 600; }
     footer code {
       font-family: var(--mono);
+      color: var(--muted);
       background: var(--panel-2);
       border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 1px 6px;
+      border-radius: 4px;
+      padding: 0 5px;
       font-size: 11px;
     }
   </style>
@@ -190,10 +234,17 @@
 <body>
   <div class="wrap">
     <header>
-      <span class="logo"><span class="dim">labkit /</span> token-cost</span>
-      <span class="badge">playground</span>
+      <span class="sigil">$</span>
+      <span class="cmd">labkit <b>token-cost</b> estimate</span>
+      <span class="caret"></span>
+      <span class="rule"></span>
+      <span class="ver">playground</span>
     </header>
-    <p class="tagline">Same prompt, 24 models, five labs. What does it actually cost, and what's the catch?</p>
+    <p class="tagline">
+      Price one prompt against <b>24 models across five labs</b> at once, ranked
+      cheapest first. Every row carries the catch, so the low number never quietly
+      costs you the wrong model.
+    </p>
 
     <div class="inputs">
       <div>
@@ -202,9 +253,9 @@
         <div class="meta" id="charMeta"></div>
       </div>
       <div>
-        <label for="outTokens">Assumed output tokens</label>
+        <label for="outTokens">Assumed output</label>
         <input type="number" id="outTokens" value="500" min="0" step="50" />
-        <div class="meta">what you expect the model to write back</div>
+        <div class="meta">tokens you expect back</div>
       </div>
     </div>
 
@@ -212,13 +263,22 @@
 
     <div class="table-card">
       <table>
+        <colgroup>
+          <col style="width: 24%" />
+          <col style="width: 7.5%" />
+          <col style="width: 7.5%" />
+          <col style="width: 8.5%" />
+          <col style="width: 8.5%" />
+          <col style="width: 13%" />
+          <col style="width: 31%" />
+        </colgroup>
         <thead>
           <tr>
             <th>Model</th>
-            <th class="num">In tokens</th>
-            <th class="num">Out tokens</th>
-            <th class="num">$ / 1M in</th>
-            <th class="num">$ / 1M out</th>
+            <th class="num">In</th>
+            <th class="num">Out</th>
+            <th class="num">$/M in</th>
+            <th class="num">$/M out</th>
             <th class="num">Total</th>
             <th>The catch</th>
           </tr>
@@ -228,14 +288,9 @@
     </div>
 
     <footer>
-      Token counts here are chars÷4 estimates for every lab, so this is a rough
-      preview. The <code>token-cost</code> CLI gives exact OpenAI counts via
-      tiktoken, plus exact Anthropic and Google counts when
-      <code>ANTHROPIC_API_KEY</code> / <code>GEMINI_API_KEY</code> are set.
-      Hover any row in the "catch" column to see all of a model's known
-      limitations, so cheaper never blindly means worse. Pricing is USD per 1M
-      tokens, standard tier, snapshot verified 2026-07-10; Gemini 3.1 Pro jumps
-      to $4/$18 above 200k input tokens.
+      <div class="line"><b>Counts are chars÷4</b>, the same rough estimate for every lab. The <code>token-cost</code> CLI counts OpenAI exactly with tiktoken, and Anthropic and Google exactly once <code>ANTHROPIC_API_KEY</code> / <code>GEMINI_API_KEY</code> are set.</div>
+      <div class="line"><b>Hover the catch</b> to read every limitation on record for a model.</div>
+      <div class="line">Prices are USD per 1M tokens, standard tier, verified 2026-07-10. Gemini 3.1 Pro crosses to $4/$18 above 200k input tokens.</div>
     </footer>
   </div>
 
@@ -288,8 +343,9 @@
       const inputTokens = Math.ceil(text.length / 4);
       const outputTokens = Math.max(0, Math.floor(Number(outEl.value) || 0));
 
-      charMetaEl.textContent =
-        fmtInt(text.length) + " chars → ~" + fmtInt(inputTokens) + " tokens (chars÷4)";
+      charMetaEl.innerHTML =
+        "<b>" + fmtInt(text.length) + "</b> chars → ~<b>" + fmtInt(inputTokens) +
+        "</b> tokens · chars÷4";
 
       const rows = MODELS.map((m) => {
         // Long-context tier: whole request priced higher above the threshold.
@@ -307,39 +363,44 @@
       const priciest = rows[rows.length - 1];
 
       rowsEl.innerHTML = rows
-        .map(
-          (m, i) =>
+        .map((m, i) => {
+          const lims = m.limitations || [];
+          const catch0 = lims.length
+            ? '<td class="catch" title="' + esc(lims.join("\n")) + '">' +
+              esc(lims[0]) +
+              (lims.length > 1 ? ' <span class="count">+' + (lims.length - 1) + "</span>" : "") +
+              "</td>"
+            : '<td class="catch"></td>';
+          return (
             '<tr class="' + (i === 0 ? "cheapest" : "") + '">' +
-            '<td class="model"><span class="lab ' + m.lab + '">' + m.lab + "</span>" +
-            '<span class="name">' + m.label + "</span>" +
-            (i === 0 ? '<span class="tag">← cheapest</span>' : "") +
+            '<td class="model">' +
+              '<span class="lab ' + m.lab + '">' + m.lab + "</span>" +
+              (i === 0 ? '<span class="mark">▸</span>' : "") +
+              '<span class="name">' + m.label + "</span>" +
             "</td>" +
-            '<td class="num">~' + fmtInt(inputTokens) + "</td>" +
-            '<td class="num">~' + fmtInt(outputTokens) + "</td>" +
+            '<td class="num">' + fmtInt(inputTokens) + "</td>" +
+            '<td class="num">' + fmtInt(outputTokens) + "</td>" +
             '<td class="num">' + fmtRate(m.inRate) + "</td>" +
             '<td class="num">' + fmtRate(m.outRate) + "</td>" +
             '<td class="num total">' + fmtUsd(m.total) + "</td>" +
-            '<td class="catch"' +
-              ((m.limitations && m.limitations.length)
-                ? ' title="' + esc(m.limitations.join("\n")) + '">' +
-                  '<span class="catch-text">' + esc(m.limitations[0]) + "</span>" +
-                  (m.limitations.length > 1
-                    ? '<span class="catch-more">+' + (m.limitations.length - 1) + " more</span>"
-                    : "")
-                : ">") +
-            "</td>" +
+            catch0 +
             "</tr>"
-        )
+          );
+        })
         .join("");
 
       if (cheapest.total > 0) {
         const ratio = priciest.total / cheapest.total;
+        const ratioStr = ratio >= 100 ? Math.round(ratio) : ratio.toFixed(1);
         summaryEl.innerHTML =
-          "<strong>" + cheapest.label + "</strong> is " +
-          '<span class="x">' + ratio.toFixed(1) + "×</span> cheaper than " +
-          priciest.label + " for this call.";
+          '<span class="lead">cheapest →</span> ' +
+          '<span class="pick">' + esc(cheapest.label) + "</span> " +
+          '<span class="cost">' + fmtUsd(cheapest.total) + "</span> " +
+          '<span class="sep">│</span> ' +
+          '<span class="spread">' + ratioStr + "×</span> under " + esc(priciest.label) +
+          " at the top";
       } else {
-        summaryEl.textContent = "Type a prompt to compare costs across labs.";
+        summaryEl.innerHTML = '<span class="lead">awaiting a prompt to price…</span>';
       }
     }
 

@@ -120,6 +120,8 @@ Each result carries the model's `limitations` too, so you can surface the caveat
 
 Open [`playground/index.html`](./playground/index.html) in any browser for a zero-install, type-as-you-go version of the same comparison. No build, no keys, no network.
 
+![The token-cost playground: a prompt priced across every model, ranked cheapest first, with each model's catch beside the cost.](./playground/screenshot.jpg)
+
 ---
 
 Prices are USD per 1M tokens, standard tier, verified in `@labkit/core`'s registry. Some models charge a higher rate above a token threshold (Gemini 3.1 Pro jumps to $4/$18 above 200k input tokens); the tool applies that automatically.
