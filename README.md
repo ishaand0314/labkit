@@ -10,6 +10,8 @@ cat prompt.txt | node packages/token-cost/dist/cli.js estimate --json
 
 No terminal handy? Open [`packages/token-cost/playground/index.html`](packages/token-cost/playground/index.html) in a browser for the same comparison, zero install. Full usage in the [token-cost README](packages/token-cost/README.md).
 
+![The token-cost playground: a prompt priced across every model, ranked cheapest first, with each model's catch beside the cost.](packages/token-cost/playground/screenshot.jpg)
+
 ## Develop
 
 ```bash
