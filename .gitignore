@@ -7,3 +7,6 @@ coverage/
 .env.*
 !.env.example
 .github/workflows/ci.yml
+
+# Local VS Code workspace file
+crosslab.code-workspace
