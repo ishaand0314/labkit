@@ -2,8 +2,8 @@
 
 ## Shared core
 
-The codebase is split into two packages. `@labkit/core` holds the knowledge that
-is shared across labs, and `@labkit/token-cost` is a thin tool on top of it.
+The codebase is split into two packages. `labkit-core` holds the knowledge that
+is shared across labs, and `labkit-token-cost` is a thin tool on top of it.
 
 - **`types.ts`**: the shared vocabulary (`Lab`, `ModelInfo`, `CostEstimate`, and
   friends). One set of types keeps the registry, tokenizers, and CLI consistent.

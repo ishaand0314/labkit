@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import { readFileSync } from "node:fs";
-import { cli } from "@labkit/core";
+import { cli } from "labkit-core";
 import { compare, hasStalePricing, resolveTokenizers } from "./index.js";
 
 /**
- * CLI entry. Uses the shared router from @labkit/core for a consistent UX
+ * CLI entry. Uses the shared router from labkit-core for a consistent UX
  * (--json, --help, consistent errors).
  *
  * Usage:

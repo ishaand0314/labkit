@@ -1,5 +1,5 @@
 {
-  "name": "@labkit/core",
+  "name": "labkit-core",
   "version": "0.1.0",
   "description": "Shared cross-lab primitives: provider registry, types, and CLI routing.",
   "license": "MIT",

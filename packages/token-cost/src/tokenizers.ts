@@ -1,6 +1,6 @@
 import { countTokens as anthropicLocalCount } from "@anthropic-ai/tokenizer";
-import type { Tokenizer } from "@labkit/core";
-import { modelsByLab } from "@labkit/core";
+import type { Tokenizer } from "labkit-core";
+import { modelsByLab } from "labkit-core";
 import { type Tiktoken, getEncoding } from "js-tiktoken";
 import type { TokenizerMap } from "./index.js";
 

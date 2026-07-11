@@ -1,4 +1,4 @@
-# @labkit/token-cost
+# labkit-token-cost
 
 **Paste a prompt. See what it costs across 24 models and 5 labs, ranked cheapest first, with each model's known limitations right next to the price.**
 
@@ -43,7 +43,7 @@ Run with --notes to see each model's known limitations.
 ## Install
 
 ```bash
-npm i -g @labkit/token-cost   # once published
+npm i -g labkit-token-cost   # once published
 token-cost estimate "your prompt"
 ```
 
@@ -99,7 +99,7 @@ Those counting APIs are free (they never bill tokens), and if one is unreachable
 ## In your own code
 
 ```ts
-import { compare, resolveTokenizers } from "@labkit/token-cost";
+import { compare, resolveTokenizers } from "labkit-token-cost";
 
 // offline: exact OpenAI, honest estimates elsewhere
 const results = compare("summarize this document", { outputTokens: 500 });
@@ -124,4 +124,4 @@ Open [`playground/index.html`](./playground/index.html) in any browser for a zer
 
 ---
 
-Prices are USD per 1M tokens, standard tier, verified in `@labkit/core`'s registry. Some models charge a higher rate above a token threshold (Gemini 3.1 Pro jumps to $4/$18 above 200k input tokens); the tool applies that automatically.
+Prices are USD per 1M tokens, standard tier, verified in `labkit-core`'s registry. Some models charge a higher rate above a token threshold (Gemini 3.1 Pro jumps to $4/$18 above 200k input tokens); the tool applies that automatically.

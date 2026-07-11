@@ -1,4 +1,4 @@
-import { MODELS } from "@labkit/core";
+import { MODELS } from "labkit-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { estimateForModel } from "../src/index.js";
 import {

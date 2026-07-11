@@ -28,12 +28,12 @@ importers:
       '@anthropic-ai/tokenizer':
         specifier: ^0.0.4
         version: 0.0.4
-      '@labkit/core':
-        specifier: workspace:*
-        version: link:../core
       js-tiktoken:
         specifier: ^1.0.21
         version: 1.0.21
+      labkit-core:
+        specifier: workspace:^
+        version: link:../core
 
 packages:
 

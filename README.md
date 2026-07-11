@@ -24,7 +24,7 @@ pnpm typecheck    # tsc --build
 
 ## Structure
 
-The model registry, shared types, and CLI router live in `@labkit/core`; the
+The model registry, shared types, and CLI router live in `labkit-core`; the
 `token-cost` package is a thin CLI + library on top of it.
 
 ```

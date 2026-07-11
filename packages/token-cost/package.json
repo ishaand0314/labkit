@@ -1,5 +1,5 @@
 {
-  "name": "@labkit/token-cost",
+  "name": "labkit-token-cost",
   "version": "0.1.0",
   "description": "Compare token counts and USD cost for the same text across models from every lab. One view, zero setup.",
   "license": "MIT",
@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "@anthropic-ai/tokenizer": "^0.0.4",
-    "@labkit/core": "workspace:^",
+    "labkit-core": "workspace:^",
     "js-tiktoken": "^1.0.21"
   }
 }

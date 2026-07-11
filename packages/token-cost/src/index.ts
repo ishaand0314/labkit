@@ -5,7 +5,7 @@ import {
   type ModelInfo,
   type Tokenizer,
   isStale,
-} from "@labkit/core";
+} from "labkit-core";
 import { defaultTokenizers } from "./tokenizers.js";
 
 export {
